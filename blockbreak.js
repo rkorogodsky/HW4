@@ -1,13 +1,13 @@
 $(function() {
   var Q = window.Q = Quintus()
-                     .include('Input,Sprites,Scenes')
+                     .include('Input,Sprites,Scenes,UI')
                      .setup();
 
-  // Q.input.keyboardControls();
+  Q.input.keyboardControls();
   Q.input.mouseControls();
-  /*Q.input.touchControls({ 
+  Q.input.touchControls({ 
             controls:  [ ['left','mouseX' ],[],[],[],['right','mouseX' ] ]
-  });*/
+  });
 
   Q.Sprite.extend("Paddle", {     // extend Sprite class to create Q.Paddle subclass
     init: function(p) {
@@ -77,7 +77,7 @@ $(function() {
 			p.y = 0;
 			p.dy = 1;
 		  } else if(p.y > Q.height) { 
-			Q.stageScene('game');
+			Q.stageScene('lose');
 		  }
 	  });
     },
@@ -111,7 +111,7 @@ $(function() {
     // Q.compileSheets('blockbreak.png','blockbreak.json');  
 	Q.sheet("ball", "blockbreak.png", { tilew: 20, tileh: 20, sy: 0, sx: 0 });
 	Q.sheet("block", "blockbreak.png", { tilew: 40, tileh: 20, sy: 20, sx: 0 });
-	Q.sheet("paddle", "blockbreak.png", { tilew: 60, tileh: 20, sy: 40, sx: 0 });		 		 
+	Q.sheet("paddle", "blockbreak.png", { tilew: 60, tileh: 20, sy: 40, sx: 0 });		 	
     Q.scene('game',new Q.Scene(function(stage) {
       stage.insert(new Q.Paddle());
       stage.insert(new Q.Ball());
@@ -126,11 +126,49 @@ $(function() {
       stage.on('removeBlock',function() {
         blockCount--;
         if(blockCount == 0) {
-          Q.stageScene('game');
+          Q.stageScene('win');
         }
       });
 
     }));
-    Q.stageScene('game');
-  });  
+Q.scene('lose', function (stage) 
+	{
+		// Add container
+		var container = stage.insert(new Q.UI.Container(
+		{
+			x: Q.width / 2,
+			y: Q.height / 4,
+			fill: '#000'
+		}));
+
+    // Add death message
+    container.insert(new Q.UI.Text(
+	{
+        label: 'You Died!',
+        color: '#fff',
+        x: 0,
+        y: 0
+    }));
+});
+Q.scene('win', function (stage) 
+	{
+		// Add container
+		var container = stage.insert(new Q.UI.Container(
+		{
+			x: Q.width / 2,
+			y: Q.height / 4,
+			fill: '#000'
+		}));
+
+    // Add death message
+    container.insert(new Q.UI.Text(
+	{
+        label: 'You Win!',
+        color: '#fff',
+        x: 0,
+        y: 0
+    }));
+});
+	Q.stageScene('game');
+    });  
 });
