@@ -1,14 +1,17 @@
 $(function() {
   var Q = window.Q = Quintus()
-                     .include('Input,Sprites,Scenes,UI')
-                     .setup();
+                     .include(['Sprites', 'Scenes', 'Input', 'Touch', '2D', 'UI', 'Anim', 'Audio'])
+                     .setup().touch().enableSound();
 
   Q.input.keyboardControls();
   Q.input.mouseControls();
   Q.input.touchControls({ 
-            controls:  [ ['left','mouseX' ],[],[],[],['right','mouseX' ] ]
+            controls:  [ ['left','<' ],[],[],[],['right','>' ] ]
   });
-
+  Q.input.keyboardControls({
+  	// Spacebar
+    32: 'space'
+});
   Q.Sprite.extend("Paddle", {     // extend Sprite class to create Q.Paddle subclass
     init: function(p) {
       this._super(p, {
@@ -77,6 +80,7 @@ $(function() {
 			p.y = 0;
 			p.dy = 1;
 		  } else if(p.y > Q.height) { 
+		  	Q.clearStages();
 			Q.stageScene('lose');
 		  }
 	  });
@@ -115,7 +119,7 @@ $(function() {
     Q.scene('game',new Q.Scene(function(stage) {
       stage.insert(new Q.Paddle());
       stage.insert(new Q.Ball());
-
+	  Q.input.mouseControls();
       var blockCount=0;
       for(var x=0;x<6;x++) {
         for(var y=0;y<5;y++) {
@@ -126,6 +130,7 @@ $(function() {
       stage.on('removeBlock',function() {
         blockCount--;
         if(blockCount == 0) {
+          Q.clearStages();
           Q.stageScene('win');
         }
       });
@@ -141,13 +146,24 @@ Q.scene('lose', function (stage)
 			fill: '#000'
 		}));
 
-    // Add death message
+    // Add lose message
     container.insert(new Q.UI.Text(
 	{
-        label: 'You Died!',
+        label: 'You Lose!',
         color: '#fff',
         x: 0,
         y: 0
+    }));
+    	Q.input.disableMouseControls();
+    	container.insert(new Q.UI.Button({
+    	label: 'Play Again',
+   	 	fill: '#fff',
+    	x: 0,
+    	y: 140,
+    	w: 130
+    	}, function () {
+    	// Return to the game
+    	Q.stageScene('game');
     }));
 });
 Q.scene('win', function (stage) 
@@ -160,13 +176,24 @@ Q.scene('win', function (stage)
 			fill: '#000'
 		}));
 
-    // Add death message
+    // Add win message
     container.insert(new Q.UI.Text(
 	{
         label: 'You Win!',
         color: '#fff',
         x: 0,
         y: 0
+    }));
+        Q.input.disableMouseControls();
+    	container.insert(new Q.UI.Button({
+    	label: 'Play Again',
+   	 	fill: '#fff',
+    	x: 0,
+    	y: 140,
+    	w: 130
+    	}, function () {
+    	// Return to the game
+    	Q.stageScene('game');
     }));
 });
 	Q.stageScene('game');
