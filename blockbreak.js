@@ -136,6 +136,36 @@ $(function() {
       });
 
     }));
+Q.scene('title', function (stage) 
+	{
+		// Add container
+		var container = stage.insert(new Q.UI.Container(
+		{
+			x: Q.width / 2,
+			y: Q.height / 4,
+			fill: '#000'
+		}));
+
+    // Add title message
+    container.insert(new Q.UI.Text(
+	{
+        label: 'Block Break',
+        color: '#fff',
+        x: 0,
+        y: 0
+    }));
+        Q.input.disableMouseControls();
+    	container.insert(new Q.UI.Button({
+    	label: 'Start Game',
+   	 	fill: '#fff',
+    	x: 0,
+    	y: 140,
+    	w: 130
+    	}, function () {
+    	// Start game
+    	Q.stageScene('game');
+    }));
+});
 Q.scene('lose', function (stage) 
 	{
 		// Add container
@@ -196,6 +226,6 @@ Q.scene('win', function (stage)
     	Q.stageScene('game');
     }));
 });
-	Q.stageScene('game');
+	Q.stageScene('title');
     });  
 });
